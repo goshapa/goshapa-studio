@@ -1,0 +1,590 @@
+<title>Goshapa Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Sora:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#f5eee3;
+    --bg-soft:#efe3d2;
+    --card:#fffdf9;
+    --ink:#211d17;
+    --ink-soft:#6b6152;
+    --pine:#16281c;
+    --pine-soft:#3c5945;
+    --rose:#d98ca6;
+    --rose-deep:#b65c7c;
+    --rose-pale:#f3d9e2;
+    --line:rgba(33,29,23,.13);
+    --shadow:0 20px 45px -28px rgba(22,40,28,.45);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15130f;
+      --bg-soft:#1d1a14;
+      --card:#201c16;
+      --ink:#f3ead9;
+      --ink-soft:#bfb2a0;
+      --pine:#a2c6ab;
+      --pine-soft:#87ac90;
+      --rose:#ecaec4;
+      --rose-deep:#f4cbdb;
+      --rose-pale:#3a2530;
+      --line:rgba(243,234,217,.16);
+      --shadow:0 20px 45px -26px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15130f;
+    --bg-soft:#1d1a14;
+    --card:#201c16;
+    --ink:#f3ead9;
+    --ink-soft:#bfb2a0;
+    --pine:#a2c6ab;
+    --pine-soft:#87ac90;
+    --rose:#ecaec4;
+    --rose-deep:#f4cbdb;
+    --rose-pale:#3a2530;
+    --line:rgba(243,234,217,.16);
+    --shadow:0 20px 45px -26px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
+    padding:0 20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.disp{
+    font-family:'Fraunces',Georgia,'Times New Roman',serif;
+    font-optical-sizing:auto;
+    color:var(--pine);
+    margin:0;
+    text-wrap:balance;
+    letter-spacing:-.01em;
+  }
+  p{margin:0; color:var(--ink-soft); line-height:1.65;}
+  a{color:inherit;}
+  .wrap{max-width:1180px; margin:0 auto;}
+  .eyebrow{
+    font-size:.72rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--rose-deep); display:flex; align-items:center; gap:.5em;
+  }
+  .eyebrow::before{content:""; width:1.4em; height:1px; background:var(--rose-deep); display:inline-block;}
+  section{padding-block:clamp(56px,9vw,108px);}
+  .btn{
+    display:inline-flex; align-items:center; gap:.5em;
+    padding:.85em 1.7em; border-radius:999px; font-weight:600; font-size:.92rem;
+    text-decoration:none; border:1px solid transparent; cursor:pointer;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s, background .35s, color .35s, border-color .35s;
+    font-family:inherit; white-space:nowrap;
+  }
+  .btn-primary{background:var(--pine); color:var(--bg);}
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:var(--shadow);}
+  .btn-ghost{background:transparent; color:var(--pine); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--pine); transform:translateY(-3px);}
+  .btn-rose{background:var(--rose); color:var(--pine);}
+  .btn-rose:hover{background:var(--rose-deep); transform:translateY(-3px); box-shadow:var(--shadow);}
+
+  /* NAV */
+  #nav{
+    position:sticky; top:0; z-index:50; margin:0 -20px; padding:0 20px;
+    transition:background .4s, box-shadow .4s, backdrop-filter .4s;
+  }
+  #nav .inner{
+    max-width:1180px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;
+    padding:20px 0; transition:padding .4s;
+  }
+  #nav.scrolled{background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--line);}
+  #nav.scrolled .inner{padding:13px 0;}
+  .logo{font-family:'Fraunces',serif; font-weight:600; font-size:1.28rem; letter-spacing:-.02em; color:var(--pine); text-decoration:none; display:flex; align-items:center; gap:.5em;}
+  .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--rose);}
+  .navlinks{display:flex; gap:2.1em; list-style:none; margin:0; padding:0;}
+  .navlinks a{text-decoration:none; font-size:.88rem; font-weight:600; color:var(--ink-soft); position:relative; padding-bottom:2px;}
+  .navlinks a::after{content:""; position:absolute; left:0; bottom:-3px; width:0; height:1.5px; background:var(--rose-deep); transition:width .3s;}
+  .navlinks a:hover{color:var(--pine);}
+  .navlinks a:hover::after{width:100%;}
+  .navcta{display:flex; align-items:center; gap:1.4em;}
+  #menuBtn{display:none; background:none; border:none; cursor:pointer; padding:6px;}
+  #menuBtn span{display:block; width:22px; height:2px; background:var(--pine); margin:5px 0; transition:transform .3s, opacity .3s;}
+
+  /* HERO */
+  .hero{padding-block:clamp(48px,8vw,90px) clamp(40px,6vw,64px); overflow:visible;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;}
+  .hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem); line-height:.98; font-weight:600;}
+  .hero h1 em{font-style:normal; color:var(--rose-deep);}
+  .hero-sub{max-width:46ch; font-size:1.05rem; margin-top:18px;}
+  .hero-cta{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
+  .hero-stats{display:flex; gap:34px; margin-top:44px; flex-wrap:wrap;}
+  .hero-stats div b{display:block; font-family:'Fraunces',serif; font-size:1.7rem; color:var(--pine); font-weight:600;}
+  .hero-stats div span{font-size:.78rem; color:var(--ink-soft);}
+
+  .blob-stage{position:relative; height:420px;}
+  .blob{position:absolute; border-radius:50%; box-shadow:var(--shadow);}
+  .blob-1{width:280px; height:280px; right:10%; top:0; background:radial-gradient(circle at 32% 28%, #f0c9d6, var(--rose)); animation:float1 9s ease-in-out infinite;}
+  .blob-2{width:170px; height:170px; left:4%; top:120px; background:radial-gradient(circle at 30% 30%, #d8e6d8, var(--pine-soft)); animation:float2 10s ease-in-out infinite;}
+  .blob-3{width:120px; height:120px; right:24%; bottom:8px; background:var(--card); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; text-align:center; animation:float3 7.5s ease-in-out infinite; box-shadow:var(--shadow);}
+  .blob-3 span{font-family:'Fraunces',serif; font-weight:600; color:var(--pine); font-size:1.35rem; line-height:1.05;}
+  .blob-3 small{display:block; font-family:'Sora',sans-serif; font-weight:600; font-size:.6rem; letter-spacing:.1em; color:var(--rose-deep); margin-top:2px;}
+  @keyframes float1{0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-18px) rotate(4deg)}}
+  @keyframes float2{0%,100%{transform:translateY(0)} 50%{transform:translateY(16px)}}
+  @keyframes float3{0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-12px) rotate(-6deg)}}
+
+  /* reveal */
+  .reveal{opacity:1; transform:none;}
+  @media (min-width:1px){
+    .reveal{transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1);}
+  }
+  .js .reveal{opacity:0; transform:translateY(26px);}
+  .js .reveal.is-visible{opacity:1; transform:none;}
+
+  .kicker-row{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:38px; flex-wrap:wrap;}
+  .kicker-row h2{font-size:clamp(1.7rem,3.4vw,2.5rem); font-weight:600;}
+
+  /* SERVICES SHOWCASE (horizontal snap) */
+  .showcase{display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory; padding:6px 2px 18px; margin:0 -2px; scrollbar-width:thin;}
+  .showcase::-webkit-scrollbar{height:6px;}
+  .showcase::-webkit-scrollbar-thumb{background:var(--line); border-radius:99px;}
+  .swcard{
+    flex:0 0 250px; scroll-snap-align:start; background:var(--card); border:1px solid var(--line); border-radius:22px;
+    overflow:hidden; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
+  }
+  .swcard:hover{transform:translateY(-7px); box-shadow:var(--shadow);}
+  .sw-swatch{height:132px; position:relative;}
+  .sw-tag{position:absolute; top:12px; left:12px; background:rgba(255,253,249,.88); color:var(--pine); font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-radius:99px;}
+  .sw-body{padding:18px 18px 20px;}
+  .sw-body h3{font-size:1.02rem; font-weight:600; margin-bottom:10px; min-height:2.5em;}
+  .sw-price{display:flex; align-items:center; justify-content:space-between;}
+  .sw-price b{font-family:'Fraunces',serif; color:var(--pine); font-size:1.12rem; font-weight:600;}
+  .sw-price a{color:var(--rose-deep); font-size:.8rem; font-weight:700; text-decoration:none;}
+
+  /* PRICES TABS */
+  .tabbar{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:30px;}
+  .tabbtn{
+    flex:0 0 auto; padding:.65em 1.3em; border-radius:999px; border:1px solid var(--line); background:var(--card);
+    font-family:inherit; font-size:.84rem; font-weight:600; color:var(--ink-soft); cursor:pointer;
+    transition:background .3s, color .3s, border-color .3s;
+  }
+  .tabbtn:hover{border-color:var(--rose);}
+  .tabbtn.active{background:var(--pine); color:var(--bg); border-color:var(--pine);}
+  .pricepanel{display:none; animation:fadein .5s ease;}
+  .pricepanel.active{display:block;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  .pricelist{display:grid; grid-template-columns:1fr 1fr; gap:0 48px;}
+  .price-row{display:flex; align-items:baseline; gap:10px; padding:15px 0; border-bottom:1px dashed var(--line);}
+  .price-row .name{font-weight:500; font-size:.95rem;}
+  .price-row .leader{flex:1; border-bottom:1px dotted var(--line); transform:translateY(-4px);}
+  .price-row .amount{font-family:'Fraunces',serif; font-weight:600; color:var(--pine); font-size:.98rem; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .price-cta{margin-top:30px;}
+
+  /* WHY US */
+  .pillars{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
+  .pillar{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:26px 22px; transition:transform .4s, box-shadow .4s;}
+  .pillar:hover{transform:translateY(-6px); box-shadow:var(--shadow);}
+  .pillar .tag{font-family:'Fraunces',serif; font-weight:600; color:var(--rose-deep); font-size:1.12rem;}
+  .pillar p{margin-top:10px; font-size:.88rem;}
+
+  .about-grid{display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:start;}
+  .about-grid p{font-size:1.02rem; max-width:44ch;}
+
+  /* STUDIOS */
+  .studio-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .studio{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:24px; transition:transform .4s, box-shadow .4s, border-color .4s;}
+  .studio:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:var(--rose);}
+  .studio h3{font-size:1.15rem; font-weight:600;}
+  .studio .addr{font-size:.88rem; margin-top:8px;}
+  .studio .hours{font-size:.78rem; color:var(--rose-deep); font-weight:600; margin-top:10px;}
+  .studio .phones{margin-top:14px; display:flex; flex-direction:column; gap:3px; font-size:.85rem;}
+  .studio a.tel{text-decoration:none; color:var(--ink);}
+  .studio a.tel:hover{color:var(--rose-deep);}
+
+  /* LOYALTY */
+  .loyalty{
+    background:linear-gradient(135deg,var(--pine),#0f1d14 85%); border-radius:28px; padding:clamp(32px,5vw,56px);
+    display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center; color:var(--bg); overflow:hidden; position:relative;
+  }
+  :root[data-theme="dark"] .loyalty, @media (prefers-color-scheme:dark){.loyalty{}}
+  .loyalty::before{content:""; position:absolute; width:340px; height:340px; border-radius:50%; background:radial-gradient(circle,rgba(217,140,166,.35),transparent 70%); right:-90px; top:-90px;}
+  .loyalty h2{color:var(--bg); font-size:clamp(1.6rem,3vw,2.2rem);}
+  .loyalty p{color:#d8e2da; margin-top:14px; max-width:42ch;}
+  .loyalty-badge{background:rgba(245,238,227,.1); border:1px solid rgba(245,238,227,.25); border-radius:18px; padding:22px; text-align:center; backdrop-filter:blur(6px);}
+  .loyalty-badge b{display:block; font-family:'Fraunces',serif; font-size:1.7rem; color:var(--rose);}
+  .loyalty-badge span{font-size:.78rem; color:#cfd8d1;}
+
+  /* REVIEWS MARQUEE */
+  .marquee-outer{overflow:hidden; -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
+  .marquee{display:flex; gap:18px; width:max-content; animation:scroll-x 46s linear infinite;}
+  .marquee-outer:hover .marquee, .marquee-outer:focus-within .marquee{animation-play-state:paused;}
+  @keyframes scroll-x{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  .review{flex:0 0 320px; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px;}
+  .review p{font-size:.87rem; color:var(--ink); max-height:9.6em; overflow:hidden;}
+  .review .who{margin-top:14px; font-weight:700; font-size:.82rem; color:var(--rose-deep);}
+  .stars{color:var(--rose); letter-spacing:2px; font-size:.9rem; margin-bottom:8px;}
+
+  /* SOCIAL / APP */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:22px; padding:30px; transition:transform .4s, box-shadow .4s;}
+  .panel:hover{transform:translateY(-5px); box-shadow:var(--shadow);}
+  .panel h3{font-size:1.2rem; font-weight:600;}
+  .panel ul{margin:16px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .panel ul li{font-size:.86rem; color:var(--ink-soft); display:flex; gap:8px; align-items:center;}
+  .panel ul li::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--rose);}
+  .storebtns{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+
+  footer{border-top:1px solid var(--line); padding-block:50px 34px; margin-top:20px;}
+  .foot-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:30px;}
+  .foot-grid h4{font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--rose-deep); margin:0 0 14px;}
+  .foot-grid a, .foot-grid p{display:block; text-decoration:none; font-size:.86rem; color:var(--ink-soft); margin-bottom:8px;}
+  .foot-grid a:hover{color:var(--pine);}
+  .foot-bottom{margin-top:40px; padding-top:24px; border-top:1px solid var(--line); display:flex; justify-content:space-between; font-size:.78rem; color:var(--ink-soft); flex-wrap:wrap; gap:10px;}
+
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr;}
+    .blob-stage{height:280px;}
+    .about-grid, .split{grid-template-columns:1fr;}
+    .pillars{grid-template-columns:repeat(2,1fr);}
+    .studio-grid{grid-template-columns:repeat(2,1fr);}
+    .pricelist{grid-template-columns:1fr;}
+    .loyalty{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:640px){
+    .navlinks, .navcta .btn-ghost{display:none;}
+    #menuBtn{display:block;}
+    .pillars{grid-template-columns:1fr;}
+    .studio-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr;}
+    .hero-stats{gap:22px;}
+  }
+  .navlinks.open{
+    display:flex; position:absolute; top:100%; left:20px; right:20px; background:var(--card);
+    border:1px solid var(--line); border-radius:16px; flex-direction:column; padding:18px; gap:16px; box-shadow:var(--shadow);
+  }
+</style>
+
+<div id="nav">
+  <div class="inner wrap">
+    <a href="#top" class="logo"><span class="dot"></span>Goshapa Studio</a>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="#services">Услуги</a></li>
+      <li><a href="#prices">Цены</a></li>
+      <li><a href="#studios">Студии</a></li>
+      <li><a href="#about">О нас</a></li>
+      <li><a href="#club">Goshapa Club</a></li>
+      <li><a href="#reviews">Отзывы</a></li>
+    </ul>
+    <div class="navcta">
+      <a href="tel:+998952362500" class="btn btn-ghost">+998 95 236 25 00</a>
+      <a href="#booking" class="btn btn-primary">Записаться</a>
+      <button id="menuBtn" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div class="reveal">
+        <p class="eyebrow">Сеть студий красоты · Ташкент</p>
+        <h1>Красота,<br>на которую<br><em>можно положиться</em></h1>
+        <p class="hero-sub">Наращивание ресниц, маникюр, педикюр, эпиляция и парикмахерские услуги в шести студиях города. Честные цены, стерильные инструменты, мастера, которых рекомендуют.</p>
+        <div class="hero-cta">
+          <a href="#booking" class="btn btn-rose">Записаться онлайн</a>
+          <a href="#prices" class="btn btn-ghost">Смотреть цены</a>
+        </div>
+        <div class="hero-stats">
+          <div><b>6</b><span>студий в Ташкенте</span></div>
+          <div><b>10:00–21:00</b><span>без выходных</span></div>
+          <div><b>–15%</b><span>первым клиентам</span></div>
+        </div>
+      </div>
+      <div class="blob-stage reveal">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"><span>GS<br>STUDIO</span><small>ТАШКЕНТ</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="wrap">
+    <div class="kicker-row reveal">
+      <div>
+        <p class="eyebrow">Чем славимся</p>
+        <h2>Популярные услуги</h2>
+      </div>
+      <a href="#prices" class="btn btn-ghost">Весь прайс</a>
+    </div>
+    <div class="showcase reveal">
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#efc7d3,#d98ca6);"><span class="sw-tag">Ресницы</span></div><div class="sw-body"><h3>Наращивание 2D</h3><div class="sw-price"><b>329 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e3ded0,#b9a98a);"><span class="sw-tag">Брови</span></div><div class="sw-body"><h3>Архитектура бровей</h3><div class="sw-price"><b>190 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d7e3d7,#96b79c);"><span class="sw-tag">Маникюр</span></div><div class="sw-body"><h3>Маникюр + гель-лак PNB</h3><div class="sw-price"><b>280 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#f0d9c9,#d9a074);"><span class="sw-tag">Педикюр</span></div><div class="sw-body"><h3>SMART педикюр</h3><div class="sw-price"><b>290 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e6d3e6,#b78fbd);"><span class="sw-tag">Эпиляция</span></div><div class="sw-body"><h3>Шугаринг глубокого бикини</h3><div class="sw-price"><b>199 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d9c9c2,#a97e6f);"><span class="sw-tag">Волосы</span></div><div class="sw-body"><h3>Стрижка с укладкой</h3><div class="sw-price"><b>550 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+    </div>
+  </section>
+
+  <section id="prices" class="wrap">
+    <div class="kicker-row reveal">
+      <div>
+        <p class="eyebrow">Прайс-лист</p>
+        <h2>Цены и услуги</h2>
+      </div>
+    </div>
+    <div class="tabbar reveal" id="tabbar">
+      <button class="tabbtn active" data-tab="lash">Ресницы и брови</button>
+      <button class="tabbtn" data-tab="mani">Маникюр</button>
+      <button class="tabbtn" data-tab="pedi">Педикюр</button>
+      <button class="tabbtn" data-tab="epil">Эпиляция</button>
+      <button class="tabbtn" data-tab="hair">Волосы</button>
+      <button class="tabbtn" data-tab="design">Дизайн и снятие</button>
+    </div>
+
+    <div class="pricepanel active" data-panel="lash">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Наращивание ресниц 1D</span><span class="leader"></span><span class="amount">269 000 so'm</span></div>
+        <div class="price-row"><span class="name">Наращивание ресниц 2D</span><span class="leader"></span><span class="amount">329 000 so'm</span></div>
+        <div class="price-row"><span class="name">Ламинирование ресниц</span><span class="leader"></span><span class="amount">269 000 so'm</span></div>
+        <div class="price-row"><span class="name">Ботокс для ресниц</span><span class="leader"></span><span class="amount">70 000 so'm</span></div>
+        <div class="price-row"><span class="name">Архитектура бровей</span><span class="leader"></span><span class="amount">190 000 so'm</span></div>
+        <div class="price-row"><span class="name">Ламинирование бровей</span><span class="leader"></span><span class="amount">269 000 so'm</span></div>
+        <div class="price-row"><span class="name">Окрашивание бровей краской</span><span class="leader"></span><span class="amount">110 000 so'm</span></div>
+        <div class="price-row"><span class="name">Окрашивание бровей хной</span><span class="leader"></span><span class="amount">159 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="pricepanel" data-panel="mani">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Маникюр классический/комбинированный</span><span class="leader"></span><span class="amount">190 000 so'm</span></div>
+        <div class="price-row"><span class="name">Маникюр аппаратный</span><span class="leader"></span><span class="amount">230 000 so'm</span></div>
+        <div class="price-row"><span class="name">Японский маникюр — уход</span><span class="leader"></span><span class="amount">199 000 so'm</span></div>
+        <div class="price-row"><span class="name">Маникюр + гель-лак «Стандарт» El Paza</span><span class="leader"></span><span class="amount">240 000 so'm</span></div>
+        <div class="price-row"><span class="name">Маникюр + гель-лак PNB</span><span class="leader"></span><span class="amount">280 000 so'm</span></div>
+        <div class="price-row"><span class="name">Маникюр + покрытие Luxio</span><span class="leader"></span><span class="amount">300 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="pricepanel" data-panel="pedi">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Педикюр классический/комбинированный</span><span class="leader"></span><span class="amount">250 000 so'm</span></div>
+        <div class="price-row"><span class="name">Педикюр + гель-лак PNB</span><span class="leader"></span><span class="amount">380 000 so'm</span></div>
+        <div class="price-row"><span class="name">SMART педикюр</span><span class="leader"></span><span class="amount">290 000 so'm</span></div>
+        <div class="price-row"><span class="name">Педикюр — экспресс</span><span class="leader"></span><span class="amount">140 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="pricepanel" data-panel="epil">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Шугаринг глубокого бикини</span><span class="leader"></span><span class="amount">199 000 so'm</span></div>
+        <div class="price-row"><span class="name">Депиляция полимером глубокого бикини</span><span class="leader"></span><span class="amount">279 000 so'm</span></div>
+        <div class="price-row"><span class="name">Шугаринг подмышечных впадин</span><span class="leader"></span><span class="amount">110 000 so'm</span></div>
+        <div class="price-row"><span class="name">Восковая депиляция голеней/бёдер</span><span class="leader"></span><span class="amount">210 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="pricepanel" data-panel="hair">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Модельная стрижка с укладкой</span><span class="leader"></span><span class="amount">550 000 so'm</span></div>
+        <div class="price-row"><span class="name">Окрашивание в 1 тон</span><span class="leader"></span><span class="amount">от 800 000 so'm</span></div>
+        <div class="price-row"><span class="name">Уход Greymy для восстановления волос</span><span class="leader"></span><span class="amount">от 450 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="pricepanel" data-panel="design">
+      <div class="pricelist">
+        <div class="price-row"><span class="name">Дизайн простой</span><span class="leader"></span><span class="amount">10 000–60 000 so'm</span></div>
+        <div class="price-row"><span class="name">Дизайн средней сложности</span><span class="leader"></span><span class="amount">15 000–90 000 so'm</span></div>
+        <div class="price-row"><span class="name">Дизайн сложный</span><span class="leader"></span><span class="amount">50 000–250 000 so'm</span></div>
+        <div class="price-row"><span class="name">Снятие гель-лака (руки)</span><span class="leader"></span><span class="amount">40 000 so'm</span></div>
+        <div class="price-row"><span class="name">Снятие гель-лака (ноги)</span><span class="leader"></span><span class="amount">50 000 so'm</span></div>
+        <div class="price-row"><span class="name">Снятие наращённых ногтей</span><span class="leader"></span><span class="amount">70 000 so'm</span></div>
+      </div>
+    </div>
+
+    <div class="price-cta reveal"><a href="#booking" class="btn btn-primary">Записаться на услугу</a></div>
+  </section>
+
+  <section id="about" class="wrap">
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="eyebrow">За что выбирают</p>
+        <h2>Goshapa Studio — сеть студий красоты с широким спектром услуг</h2>
+        <p style="margin-top:18px;">От наращивания ресниц до маникюра, эпиляции и парикмахерских услуг — в наших студиях вы можете быть уверены в качестве и скорости любой процедуры.</p>
+      </div>
+      <div class="pillars">
+        <div class="pillar reveal"><div class="tag">Честность</div><p>Прозрачность во всём — от цен до состава средств и материалов.</p></div>
+        <div class="pillar reveal"><div class="tag">Гарантии</div><p>Мы несём личную ответственность за всё, что делаем. У нашей гарантии нет условностей.</p></div>
+        <div class="pillar reveal"><div class="tag">Безопасность</div><p>Строгие стандарты стерилизации инструментов и одноразовые наборы для маникюра и педикюра.</p></div>
+        <div class="pillar reveal"><div class="tag">Сервис</div><p>Мы заботимся о клиентах и предлагаем только то, в чём уверены на 100%.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="studios" class="wrap">
+    <div class="kicker-row reveal">
+      <div><p class="eyebrow">Где мы</p><h2>Наши студии</h2></div>
+    </div>
+    <div class="studio-grid">
+      <div class="studio reveal"><h3>Алайский</h3><p class="addr">Алайский базар</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+      <div class="studio reveal"><h3>ЦУМ</h3><p class="addr">Проезд Oloy Bozori, 63</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+      <div class="studio reveal"><h3>Сеулмун</h3><p class="addr">Ул. Чимкент, 21</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+      <div class="studio reveal"><h3>Баходыра</h3><p class="addr">Ул. Баходыра, 69</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+      <div class="studio reveal"><h3>Паркент</h3><p class="addr">Parkent ko'chasi, 209</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+      <div class="studio reveal"><h3>Лабзак</h3><p class="addr">Улица Лабзак, 112</p><p class="hours">пн–вс · 10:00–21:00</p><div class="phones"><a class="tel" href="tel:+998952362500">+998 95 236 25 00</a></div></div>
+    </div>
+  </section>
+
+  <section id="club" class="wrap">
+    <div class="loyalty reveal">
+      <div>
+        <p class="eyebrow" style="color:var(--rose);">Программа лояльности</p>
+        <h2>Goshapa Club</h2>
+        <p>Вступай в Goshapa Club, получай кешбэк бонусными баллами и оплачивай ими услуги салона. Размер кешбэка зависит от суммы, потраченной на услуги.</p>
+        <div class="hero-cta" style="margin-top:24px;"><a href="#booking" class="btn btn-rose">Подробнее о клубе</a></div>
+      </div>
+      <div class="loyalty-badge"><b>10 000 баллов</b><span>= 10 000 so'm на оплату услуг</span></div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <div class="wrap kicker-row reveal">
+      <div><p class="eyebrow">Отзывы клиентов</p><h2>Что говорят о Goshapa Studio</h2></div>
+    </div>
+    <div class="marquee-outer reveal">
+      <div class="marquee" id="marquee">
+        <div class="review"><div class="stars">★★★★★</div><p>Начиная с милейшего администратора и заканчивая идеальной работой мастера — осталась очень довольна. Маникюр выполнен аккуратно и быстро.</p><div class="who">Сева, Алайский</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Была у трёх разных мастеров на маникюре — очень удобно, что можно записываться онлайн на удобное время.</p><div class="who">Малика, ЦУМ</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Хожу больше года — до сих пор не встретила салон лучше по качеству и сервису. Постоянно рекомендую, ещё и бонусы получаю.</p><div class="who">Ирина</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Цена и сервис приятно удивили. Много акций и кэшбек, а ещё есть мобильное приложение — такого больше нигде не видела.</p><div class="who">Ирода</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Сделали покрытие Luxio, которое мало кто берётся делать. Руками и ногами осталась очень довольна.</p><div class="who">Нигора</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Большой выбор цветов, мастера-профи, маникюр держится идеально. Инструменты проходят стерилизацию, всё как полагается.</p><div class="who">Анна</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Уютная атмосфера, администраторы внимательны и предложат удобное время. Ни разу не было нареканий за всё время посещений.</p><div class="who">Маргарита</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Отличные цены на процедуры на районе при хорошем качестве. Всегда много скидок и акций — советую всем.</p><div class="who">Виктория</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="booking">
+    <div class="split">
+      <div class="panel reveal">
+        <p class="eyebrow">Мобильное приложение</p>
+        <h3>Goshapa Studio всегда под рукой</h3>
+        <ul>
+          <li>Запись без звонков, в пару касаний</li>
+          <li>История визитов и бонусные баллы</li>
+          <li>Персональные акции и промокоды</li>
+        </ul>
+        <div class="storebtns">
+          <a href="#" class="btn btn-ghost">App Store</a>
+          <a href="#" class="btn btn-ghost">Google Play</a>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <p class="eyebrow">Мы в соцсетях</p>
+        <h3>@NetneGoshapa</h3>
+        <ul>
+          <li>Розыгрыши каждые 2 недели</li>
+          <li>Подборки маникюров и трендов</li>
+          <li>Секретные акции для подписчиков</li>
+        </ul>
+        <div class="storebtns">
+          <a href="https://t.me/NetneGoshapa" class="btn btn-rose" target="_blank" rel="noopener">Telegram</a>
+          <a href="#" class="btn btn-ghost">Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="logo" style="margin-bottom:14px; display:inline-flex;"><span class="dot"></span>Goshapa Studio</a>
+        <p>Сеть студий красоты в Ташкенте. Наращивание ресниц, маникюр, педикюр, эпиляция, парикмахерские услуги.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <a href="#services">Услуги</a>
+        <a href="#prices">Цены и услуги</a>
+        <a href="#studios">Наши студии</a>
+        <a href="#club">Goshapa Club</a>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <a href="tel:+998952362500">+998 95 236 25 00</a>
+        <a href="https://t.me/NetneGoshapa" target="_blank" rel="noopener">Telegram — @NetneGoshapa</a>
+        <a href="mailto:alexgulom2009@gmail.com">alexgulom2009@gmail.com</a>
+      </div>
+      <div>
+        <h4>Студии</h4>
+        <a href="#studios">Сеулмун · Баходыра</a>
+        <a href="#studios">Паркент · Лабзак</a>
+        <a href="#">Политика конфиденциальности</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© Goshapa Studio, Ташкент</span>
+      <span>Прототип сайта — цены соответствуют актуальному прайсу</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+
+  // sticky nav shrink
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function(){
+    nav.classList.toggle('scrolled', window.scrollY > 12);
+  }, {passive:true});
+
+  // mobile menu
+  var menuBtn = document.getElementById('menuBtn');
+  var navlinks = document.getElementById('navlinks');
+  menuBtn.addEventListener('click', function(){
+    navlinks.classList.toggle('open');
+  });
+  navlinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ navlinks.classList.remove('open'); });
+  });
+
+  // reveal on scroll
+  var els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          en.target.classList.add('is-visible');
+          io.unobserve(en.target);
+        }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+
+  // price tabs
+  var tabbar = document.getElementById('tabbar');
+  tabbar.addEventListener('click', function(e){
+    var btn = e.target.closest('.tabbtn');
+    if (!btn) return;
+    tabbar.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var key = btn.dataset.tab;
+    document.querySelectorAll('.pricepanel').forEach(function(p){
+      p.classList.toggle('active', p.dataset.panel === key);
+    });
+  });
+
+  // duplicate marquee content for seamless loop
+  var marquee = document.getElementById('marquee');
+  marquee.innerHTML += marquee.innerHTML;
+</script>
