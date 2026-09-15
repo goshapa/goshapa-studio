@@ -14,7 +14,7 @@
     --rose-deep:#b65c7c;
     --rose-pale:#f3d9e2;
     --line:rgba(33,29,23,.13);
-    --shadow:0 20px 45px -28px rgba(22,40,28,.45);
+    --shadow:0 1px 2px rgba(22,40,28,.09), 0 20px 45px -28px rgba(22,40,28,.45);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -29,7 +29,7 @@
       --rose-deep:#f4cbdb;
       --rose-pale:#3a2530;
       --line:rgba(243,234,217,.16);
-      --shadow:0 20px 45px -26px rgba(0,0,0,.6);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 20px 45px -26px rgba(0,0,0,.6);
     }
   }
   :root[data-theme="dark"]{
@@ -44,7 +44,7 @@
     --rose-deep:#f4cbdb;
     --rose-pale:#3a2530;
     --line:rgba(243,234,217,.16);
-    --shadow:0 20px 45px -26px rgba(0,0,0,.6);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 20px 45px -26px rgba(0,0,0,.6);
   }
 
   *{box-sizing:border-box;}
@@ -60,6 +60,13 @@
     font-family:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;
     padding:0 20px;
     -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:2000; pointer-events:none;
+    opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   h1,h2,h3,.disp{
     font-family:'Fraunces',Georgia,'Times New Roman',serif;
@@ -115,8 +122,18 @@
   #menuBtn span{display:block; width:22px; height:2px; background:var(--pine); margin:5px 0; transition:transform .3s, opacity .3s;}
 
   /* HERO */
-  .hero{padding-block:clamp(48px,8vw,90px) clamp(40px,6vw,64px); overflow:visible;}
-  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;}
+  .hero{padding-block:clamp(48px,8vw,90px) clamp(40px,6vw,64px); overflow:visible; position:relative;}
+  .hero::before{
+    content:""; position:absolute; width:540px; height:540px; border-radius:50%;
+    background:radial-gradient(circle, rgba(217,140,166,.3), transparent 70%);
+    top:-140px; right:-180px; z-index:0; pointer-events:none;
+  }
+  .hero::after{
+    content:""; position:absolute; width:380px; height:380px; border-radius:50%;
+    background:radial-gradient(circle, rgba(60,89,69,.22), transparent 70%);
+    bottom:-120px; left:-140px; z-index:0; pointer-events:none;
+  }
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center; position:relative; z-index:1;}
   .hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem); line-height:.98; font-weight:600;}
   .hero h1 em{font-style:normal; color:var(--rose-deep);}
   .hero-sub{max-width:46ch; font-size:1.05rem; margin-top:18px;}
@@ -125,16 +142,48 @@
   .hero-stats div b{display:block; font-family:'Fraunces',serif; font-size:1.7rem; color:var(--pine); font-weight:600;}
   .hero-stats div span{font-size:.78rem; color:var(--ink-soft);}
 
-  .blob-stage{position:relative; height:420px;}
-  .blob{position:absolute; border-radius:50%; box-shadow:var(--shadow);}
-  .blob-1{width:280px; height:280px; right:10%; top:0; background:radial-gradient(circle at 32% 28%, #f0c9d6, var(--rose)); animation:float1 9s ease-in-out infinite;}
-  .blob-2{width:170px; height:170px; left:4%; top:120px; background:radial-gradient(circle at 30% 30%, #d8e6d8, var(--pine-soft)); animation:float2 10s ease-in-out infinite;}
-  .blob-3{width:120px; height:120px; right:24%; bottom:8px; background:var(--card); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; text-align:center; animation:float3 7.5s ease-in-out infinite; box-shadow:var(--shadow);}
-  .blob-3 span{font-family:'Fraunces',serif; font-weight:600; color:var(--pine); font-size:1.35rem; line-height:1.05;}
-  .blob-3 small{display:block; font-family:'Sora',sans-serif; font-weight:600; font-size:.6rem; letter-spacing:.1em; color:var(--rose-deep); margin-top:2px;}
-  @keyframes float1{0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-18px) rotate(4deg)}}
-  @keyframes float2{0%,100%{transform:translateY(0)} 50%{transform:translateY(16px)}}
-  @keyframes float3{0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-12px) rotate(-6deg)}}
+  .photo-stage{position:relative; height:440px;}
+  .polaroid{
+    position:absolute; background:var(--card); padding:9px 9px 34px; border-radius:11px;
+    box-shadow:var(--shadow); transition:transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s;
+  }
+  .polaroid:hover{transform:translateY(-8px) scale(1.02) !important; box-shadow:0 1px 2px rgba(22,40,28,.1), 0 30px 55px -24px rgba(22,40,28,.55); z-index:5 !important;}
+  .polaroid .frame{width:100%; aspect-ratio:4/5; border-radius:6px; position:relative; overflow:hidden;}
+  .polaroid .frame::after{
+    content:""; position:absolute; inset:0; mix-blend-mode:multiply; opacity:.12;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .polaroid figcaption{position:absolute; left:0; right:0; bottom:9px; text-align:center; font-family:'Fraunces',serif; font-weight:600; font-size:.86rem; color:var(--pine); margin:0;}
+  .p1{width:216px; right:2%; top:4px; animation:floatp1 9s ease-in-out infinite; z-index:3;}
+  .p2{width:168px; left:0; top:186px; animation:floatp2 10.5s ease-in-out infinite; z-index:2;}
+  .p3{width:142px; right:26%; bottom:2px; animation:floatp3 8s ease-in-out infinite; z-index:1;}
+  .ph-bg-1{background:
+    radial-gradient(circle at 22% 24%, rgba(255,255,255,.6) 0 3%, transparent 4%),
+    radial-gradient(circle at 74% 16%, rgba(255,255,255,.38) 0 4.5%, transparent 5.5%),
+    radial-gradient(circle at 84% 68%, rgba(255,255,255,.42) 0 5%, transparent 6%),
+    radial-gradient(circle at 36% 82%, rgba(255,255,255,.3) 0 6%, transparent 7%),
+    linear-gradient(148deg,#eec3d1,#c07690 55%,#7a3f52);}
+  .ph-bg-2{background:
+    radial-gradient(circle at 28% 30%, rgba(255,255,255,.55) 0 4%, transparent 5%),
+    radial-gradient(circle at 72% 22%, rgba(255,255,255,.32) 0 3.5%, transparent 4.5%),
+    radial-gradient(circle at 80% 78%, rgba(255,255,255,.4) 0 5.5%, transparent 6.5%),
+    linear-gradient(150deg,#dde6d5,#93ab8e 60%,#4c5f47);}
+  .ph-bg-3{background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.5) 0 4%, transparent 5%),
+    radial-gradient(circle at 78% 62%, rgba(255,255,255,.34) 0 5%, transparent 6%),
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,.3) 0 5%, transparent 6%),
+    linear-gradient(150deg,#ead2b8,#c08f5f 60%,#7a5330);}
+  .stage-badge{
+    position:absolute; width:118px; height:118px; right:20%; bottom:-10px; border-radius:50%;
+    background:var(--card); border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    text-align:center; box-shadow:var(--shadow); animation:floatbadge 7.5s ease-in-out infinite; z-index:4;
+  }
+  .stage-badge span{font-family:'Fraunces',serif; font-weight:600; color:var(--pine); font-size:1.3rem; line-height:1.05;}
+  .stage-badge small{display:block; font-family:'Sora',sans-serif; font-weight:600; font-size:.58rem; letter-spacing:.1em; color:var(--rose-deep); margin-top:2px;}
+  @keyframes floatp1{0%,100%{transform:rotate(4deg) translateY(0);} 50%{transform:rotate(6deg) translateY(-14px);}}
+  @keyframes floatp2{0%,100%{transform:rotate(-7deg) translateY(0);} 50%{transform:rotate(-4deg) translateY(13px);}}
+  @keyframes floatp3{0%,100%{transform:rotate(8deg) translateY(0);} 50%{transform:rotate(5deg) translateY(-11px);}}
+  @keyframes floatbadge{0%,100%{transform:translateY(0) rotate(0);} 50%{transform:translateY(-10px) rotate(-5deg);}}
 
   /* reveal */
   .reveal{opacity:1; transform:none;}
@@ -156,8 +205,15 @@
     overflow:hidden; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
   }
   .swcard:hover{transform:translateY(-7px); box-shadow:var(--shadow);}
-  .sw-swatch{height:132px; position:relative;}
-  .sw-tag{position:absolute; top:12px; left:12px; background:rgba(255,253,249,.88); color:var(--pine); font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-radius:99px;}
+  .sw-swatch{height:132px; position:relative; overflow:hidden;}
+  .sw-swatch::after{
+    content:""; position:absolute; inset:0; mix-blend-mode:multiply; opacity:.1;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .sw-tag{position:absolute; top:12px; left:12px; background:rgba(255,253,249,.88); color:var(--pine); font-size:.66rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-radius:99px; z-index:1;}
+  .sw-icon{position:absolute; top:12px; right:12px; width:28px; height:28px; z-index:1; opacity:.92;}
+  .sw-icon svg{width:100%; height:100%; stroke:#fff; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;}
+  .swcard:hover .sw-swatch{transform:none;}
   .sw-body{padding:18px 18px 20px;}
   .sw-body h3{font-size:1.02rem; font-weight:600; margin-bottom:10px; min-height:2.5em;}
   .sw-price{display:flex; align-items:center; justify-content:space-between;}
@@ -187,10 +243,18 @@
   .pillars{display:grid; grid-template-columns:repeat(4,1fr); gap:22px;}
   .pillar{background:var(--card); border:1px solid var(--line); border-radius:20px; padding:26px 22px; transition:transform .4s, box-shadow .4s;}
   .pillar:hover{transform:translateY(-6px); box-shadow:var(--shadow);}
-  .pillar .tag{font-family:'Fraunces',serif; font-weight:600; color:var(--rose-deep); font-size:1.12rem;}
+  .pillar-icon{width:44px; height:44px; border-radius:12px; background:var(--rose-pale); display:flex; align-items:center; justify-content:center; margin-bottom:16px;}
+  .pillar-icon svg{width:22px; height:22px; stroke:var(--rose-deep);}
+  .pillar .tag{font-family:'Fraunces',serif; font-weight:600; color:var(--pine); font-size:1.12rem;}
   .pillar p{margin-top:10px; font-size:.88rem;}
 
-  .about-grid{display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:start;}
+  #about{position:relative;}
+  #about::before{
+    content:""; position:absolute; width:420px; height:420px; border-radius:50%;
+    background:radial-gradient(circle, rgba(60,89,69,.16), transparent 70%);
+    top:10%; left:-120px; z-index:0; pointer-events:none;
+  }
+  .about-grid{display:grid; grid-template-columns:.85fr 1.15fr; gap:56px; align-items:start; position:relative; z-index:1;}
   .about-grid p{font-size:1.02rem; max-width:44ch;}
 
   /* STUDIOS */
@@ -211,9 +275,17 @@
   }
   :root[data-theme="dark"] .loyalty, @media (prefers-color-scheme:dark){.loyalty{}}
   .loyalty::before{content:""; position:absolute; width:340px; height:340px; border-radius:50%; background:radial-gradient(circle,rgba(217,140,166,.35),transparent 70%); right:-90px; top:-90px;}
+  .loyalty::after{
+    content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:radial-gradient(rgba(245,238,227,.14) 1.4px, transparent 1.4px);
+    background-size:22px 22px; mask-image:linear-gradient(160deg,#000,transparent 70%);
+  }
+  .loyalty > div, .loyalty-badge{position:relative; z-index:1;}
   .loyalty h2{color:var(--bg); font-size:clamp(1.6rem,3vw,2.2rem);}
   .loyalty p{color:#d8e2da; margin-top:14px; max-width:42ch;}
   .loyalty-badge{background:rgba(245,238,227,.1); border:1px solid rgba(245,238,227,.25); border-radius:18px; padding:22px; text-align:center; backdrop-filter:blur(6px);}
+  .loyalty-badge .coin{width:40px; height:40px; margin:0 auto 12px; border-radius:50%; background:rgba(217,140,166,.18); display:flex; align-items:center; justify-content:center;}
+  .loyalty-badge .coin svg{width:20px; height:20px; stroke:var(--rose); fill:none; stroke-width:1.6;}
   .loyalty-badge b{display:block; font-family:'Fraunces',serif; font-size:1.7rem; color:var(--rose);}
   .loyalty-badge span{font-size:.78rem; color:#cfd8d1;}
 
@@ -222,10 +294,15 @@
   .marquee{display:flex; gap:18px; width:max-content; animation:scroll-x 46s linear infinite;}
   .marquee-outer:hover .marquee, .marquee-outer:focus-within .marquee{animation-play-state:paused;}
   @keyframes scroll-x{from{transform:translateX(0);} to{transform:translateX(-50%);}}
-  .review{flex:0 0 320px; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px;}
-  .review p{font-size:.87rem; color:var(--ink); max-height:9.6em; overflow:hidden;}
-  .review .who{margin-top:14px; font-weight:700; font-size:.82rem; color:var(--rose-deep);}
-  .stars{color:var(--rose); letter-spacing:2px; font-size:.9rem; margin-bottom:8px;}
+  .review{flex:0 0 320px; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:22px; position:relative; overflow:hidden;}
+  .review::after{content:"”"; position:absolute; top:-18px; right:14px; font-family:'Fraunces',serif; font-size:5rem; color:var(--rose-pale); line-height:1; z-index:0;}
+  .review p{font-size:.87rem; color:var(--ink); max-height:9.6em; overflow:hidden; position:relative; z-index:1;}
+  .review .who{margin-top:14px; display:flex; align-items:center; gap:10px; font-weight:700; font-size:.82rem; color:var(--rose-deep); position:relative; z-index:1;}
+  .avatar{
+    width:30px; height:30px; border-radius:50%; flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:.82rem; color:var(--bg); background:linear-gradient(140deg,var(--rose-deep),var(--pine));
+  }
+  .stars{color:var(--rose); letter-spacing:2px; font-size:.9rem; margin-bottom:8px; position:relative; z-index:1;}
 
   /* SOCIAL / APP */
   .split{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
@@ -246,7 +323,9 @@
 
   @media (max-width:920px){
     .hero-grid{grid-template-columns:1fr;}
-    .blob-stage{height:280px;}
+    .photo-stage{height:300px;}
+    .p1{width:170px;} .p2{width:130px; top:150px;} .p3{width:110px;}
+    .stage-badge{width:92px; height:92px;}
     .about-grid, .split{grid-template-columns:1fr;}
     .pillars{grid-template-columns:repeat(2,1fr);}
     .studio-grid{grid-template-columns:repeat(2,1fr);}
@@ -304,10 +383,11 @@
           <div><b>–15%</b><span>первым клиентам</span></div>
         </div>
       </div>
-      <div class="blob-stage reveal">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"><span>GS<br>STUDIO</span><small>ТАШКЕНТ</small></div>
+      <div class="photo-stage reveal">
+        <figure class="polaroid p1"><div class="frame ph-bg-1"></div><figcaption>Ресницы</figcaption></figure>
+        <figure class="polaroid p2"><div class="frame ph-bg-2"></div><figcaption>Маникюр</figcaption></figure>
+        <figure class="polaroid p3"><div class="frame ph-bg-3"></div><figcaption>Брови</figcaption></figure>
+        <div class="stage-badge"><span>GS<br>STUDIO</span><small>ТАШКЕНТ</small></div>
       </div>
     </div>
   </section>
@@ -321,12 +401,12 @@
       <a href="#prices" class="btn btn-ghost">Весь прайс</a>
     </div>
     <div class="showcase reveal">
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#efc7d3,#d98ca6);"><span class="sw-tag">Ресницы</span></div><div class="sw-body"><h3>Наращивание 2D</h3><div class="sw-price"><b>329 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e3ded0,#b9a98a);"><span class="sw-tag">Брови</span></div><div class="sw-body"><h3>Архитектура бровей</h3><div class="sw-price"><b>190 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d7e3d7,#96b79c);"><span class="sw-tag">Маникюр</span></div><div class="sw-body"><h3>Маникюр + гель-лак PNB</h3><div class="sw-price"><b>280 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#f0d9c9,#d9a074);"><span class="sw-tag">Педикюр</span></div><div class="sw-body"><h3>SMART педикюр</h3><div class="sw-price"><b>290 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e6d3e6,#b78fbd);"><span class="sw-tag">Эпиляция</span></div><div class="sw-body"><h3>Шугаринг глубокого бикини</h3><div class="sw-price"><b>199 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
-      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d9c9c2,#a97e6f);"><span class="sw-tag">Волосы</span></div><div class="sw-body"><h3>Стрижка с укладкой</h3><div class="sw-price"><b>550 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#efc7d3,#d98ca6);"><span class="sw-tag">Ресницы</span><span class="sw-icon"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.4"/></svg></span></div><div class="sw-body"><h3>Наращивание 2D</h3><div class="sw-price"><b>329 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e3ded0,#b9a98a);"><span class="sw-tag">Брови</span><span class="sw-icon"><svg viewBox="0 0 24 24"><path d="M3 15c2-5 6-8 9-8s7 3 9 8"/></svg></span></div><div class="sw-body"><h3>Архитектура бровей</h3><div class="sw-price"><b>190 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d7e3d7,#96b79c);"><span class="sw-tag">Маникюр</span><span class="sw-icon"><svg viewBox="0 0 24 24"><path d="M12 3c1.5 2.5 2.5 4.6 2.5 6.4a2.5 2.5 0 0 1-5 0C9.5 7.6 10.5 5.5 12 3Z"/><path d="M6 21c0-3.5 2.7-6 6-6s6 2.5 6 6"/></svg></span></div><div class="sw-body"><h3>Маникюр + гель-лак PNB</h3><div class="sw-price"><b>280 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#f0d9c9,#d9a074);"><span class="sw-tag">Педикюр</span><span class="sw-icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="4" ry="6"/><path d="M8 18c0-1.7 1.8-3 4-3s4 1.3 4 3"/></svg></span></div><div class="sw-body"><h3>SMART педикюр</h3><div class="sw-price"><b>290 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#e6d3e6,#b78fbd);"><span class="sw-tag">Эпиляция</span><span class="sw-icon"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 5.5 7.6 5.5 10.5A5.5 5.5 0 1 1 6.5 13.5C6.5 10.6 9 7 12 3Z"/></svg></span></div><div class="sw-body"><h3>Шугаринг глубокого бикини</h3><div class="sw-price"><b>199 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
+      <div class="swcard"><div class="sw-swatch" style="background:linear-gradient(150deg,#d9c9c2,#a97e6f);"><span class="sw-tag">Волосы</span><span class="sw-icon"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><path d="M20 6 8 15M8 9l12 9"/></svg></span></div><div class="sw-body"><h3>Стрижка с укладкой</h3><div class="sw-price"><b>550 000 so'm</b><a href="#booking">Записаться →</a></div></div></div>
     </div>
   </section>
 
@@ -418,10 +498,22 @@
         <p style="margin-top:18px;">От наращивания ресниц до маникюра, эпиляции и парикмахерских услуг — в наших студиях вы можете быть уверены в качестве и скорости любой процедуры.</p>
       </div>
       <div class="pillars">
-        <div class="pillar reveal"><div class="tag">Честность</div><p>Прозрачность во всём — от цен до состава средств и материалов.</p></div>
-        <div class="pillar reveal"><div class="tag">Гарантии</div><p>Мы несём личную ответственность за всё, что делаем. У нашей гарантии нет условностей.</p></div>
-        <div class="pillar reveal"><div class="tag">Безопасность</div><p>Строгие стандарты стерилизации инструментов и одноразовые наборы для маникюра и педикюра.</p></div>
-        <div class="pillar reveal"><div class="tag">Сервис</div><p>Мы заботимся о клиентах и предлагаем только то, в чём уверены на 100%.</p></div>
+        <div class="pillar reveal">
+          <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+          <div class="tag">Честность</div><p>Прозрачность во всём — от цен до состава средств и материалов.</p>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 1.4 2.7-.3 1 2.5 2.3 1.4-.7 2.6.7 2.6-2.3 1.4-1 2.5-2.7-.3L12 21l-2.4-1.4-2.7.3-1-2.5-2.3-1.4.7-2.6-.7-2.6 2.3-1.4 1-2.5 2.7.3L12 3Z"/><path d="M8.7 12.2l2.2 2.2 4.2-4.4"/></svg></div>
+          <div class="tag">Гарантии</div><p>Мы несём личную ответственность за всё, что делаем. У нашей гарантии нет условностей.</p>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.6-3 7.7-7 9.5-4-1.8-7-4.9-7-9.5V6l7-3Z"/></svg></div>
+          <div class="tag">Безопасность</div><p>Строгие стандарты стерилизации инструментов и одноразовые наборы для маникюра и педикюра.</p>
+        </div>
+        <div class="pillar reveal">
+          <div class="pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.3-8.8C1.2 8 2.8 4.8 6 4.4c2-.3 3.6.8 6 3.1 2.4-2.3 4-3.4 6-3.1 3.2.4 4.8 3.6 3.3 6.8C19 15.6 12 20 12 20Z"/></svg></div>
+          <div class="tag">Сервис</div><p>Мы заботимся о клиентах и предлагаем только то, в чём уверены на 100%.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -448,7 +540,7 @@
         <p>Вступай в Goshapa Club, получай кешбэк бонусными баллами и оплачивай ими услуги салона. Размер кешбэка зависит от суммы, потраченной на услуги.</p>
         <div class="hero-cta" style="margin-top:24px;"><a href="#booking" class="btn btn-rose">Подробнее о клубе</a></div>
       </div>
-      <div class="loyalty-badge"><b>10 000 баллов</b><span>= 10 000 so'm на оплату услуг</span></div>
+      <div class="loyalty-badge"><div class="coin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8M9.5 10c0-1.2 1.1-2 2.5-2s2.5.8 2.5 2c0 2.4-5 1.6-5 4 0 1.2 1.1 2 2.5 2s2.5-.8 2.5-2"/></svg></div><b>10 000 баллов</b><span>= 10 000 so'm на оплату услуг</span></div>
     </div>
   </section>
 
@@ -458,14 +550,14 @@
     </div>
     <div class="marquee-outer reveal">
       <div class="marquee" id="marquee">
-        <div class="review"><div class="stars">★★★★★</div><p>Начиная с милейшего администратора и заканчивая идеальной работой мастера — осталась очень довольна. Маникюр выполнен аккуратно и быстро.</p><div class="who">Сева, Алайский</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Была у трёх разных мастеров на маникюре — очень удобно, что можно записываться онлайн на удобное время.</p><div class="who">Малика, ЦУМ</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Хожу больше года — до сих пор не встретила салон лучше по качеству и сервису. Постоянно рекомендую, ещё и бонусы получаю.</p><div class="who">Ирина</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Цена и сервис приятно удивили. Много акций и кэшбек, а ещё есть мобильное приложение — такого больше нигде не видела.</p><div class="who">Ирода</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Сделали покрытие Luxio, которое мало кто берётся делать. Руками и ногами осталась очень довольна.</p><div class="who">Нигора</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Большой выбор цветов, мастера-профи, маникюр держится идеально. Инструменты проходят стерилизацию, всё как полагается.</p><div class="who">Анна</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Уютная атмосфера, администраторы внимательны и предложат удобное время. Ни разу не было нареканий за всё время посещений.</p><div class="who">Маргарита</div></div>
-        <div class="review"><div class="stars">★★★★★</div><p>Отличные цены на процедуры на районе при хорошем качестве. Всегда много скидок и акций — советую всем.</p><div class="who">Виктория</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Начиная с милейшего администратора и заканчивая идеальной работой мастера — осталась очень довольна. Маникюр выполнен аккуратно и быстро.</p><div class="who"><span class="avatar">С</span>Сева, Алайский</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Была у трёх разных мастеров на маникюре — очень удобно, что можно записываться онлайн на удобное время.</p><div class="who"><span class="avatar">М</span>Малика, ЦУМ</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Хожу больше года — до сих пор не встретила салон лучше по качеству и сервису. Постоянно рекомендую, ещё и бонусы получаю.</p><div class="who"><span class="avatar">И</span>Ирина</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Цена и сервис приятно удивили. Много акций и кэшбек, а ещё есть мобильное приложение — такого больше нигде не видела.</p><div class="who"><span class="avatar">И</span>Ирода</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Сделали покрытие Luxio, которое мало кто берётся делать. Руками и ногами осталась очень довольна.</p><div class="who"><span class="avatar">Н</span>Нигора</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Большой выбор цветов, мастера-профи, маникюр держится идеально. Инструменты проходят стерилизацию, всё как полагается.</p><div class="who"><span class="avatar">А</span>Анна</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Уютная атмосфера, администраторы внимательны и предложат удобное время. Ни разу не было нареканий за всё время посещений.</p><div class="who"><span class="avatar">М</span>Маргарита</div></div>
+        <div class="review"><div class="stars">★★★★★</div><p>Отличные цены на процедуры на районе при хорошем качестве. Всегда много скидок и акций — советую всем.</p><div class="who"><span class="avatar">В</span>Виктория</div></div>
       </div>
     </div>
   </section>
